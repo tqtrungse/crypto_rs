@@ -227,7 +227,7 @@ mod tests {
     use crate::hmac::state::State;
     use crate::util::to_hex;
 
-    type HShake = fn() -> Box<dyn Hash>;
+    type H = fn() -> Box<dyn Hash>;
 
     struct Test<F>
         where
@@ -242,7 +242,7 @@ mod tests {
 
     // https://www.liavaag.org/English/SHA-Generator/HMAC/
     lazy_static! {
-        static ref TESTS: [Test<HShake>; 7] = [
+        static ref TESTS: [Test<H>; 7] = [
             Test{
                 h: sha3::new_256,
                 key: Vec::new(),
