@@ -75,13 +75,13 @@ impl CShake {
 
         if let Some(n) = n {
             c.init_block.reserve(9 * 2 + n.len() + s.len());
-            c.init_block.append(&mut left_encode(u64::try_from(8 * n.len()).unwrap()));
+            c.init_block.append(&mut left_encode((8 * n.len()) as u64));
             c.init_block.extend_from_slice(n);
         } else {
             c.init_block.reserve(9 * 2 + s.len());
             c.init_block.append(&mut left_encode(0));
         }
-        c.init_block.append(&mut left_encode(u64::try_from(8 * s.len()).unwrap()));
+        c.init_block.append(&mut left_encode((8 * s.len()) as u64));
         c.init_block.extend_from_slice(s);
         c.state.write(byte_pad(c.init_block.as_slice(), c.state.rate).as_slice());
         c
@@ -126,7 +126,7 @@ impl hash::Hash for CShake {
 fn byte_pad(input: &[u8], w: usize) -> Vec<u8> {
     // leftEncode always returns max 9 bytes
     let mut buf = Vec::<u8>::with_capacity(9 + input.len() + w);
-    buf.append(&mut left_encode(u64::try_from(w).unwrap()));
+    buf.append(&mut left_encode(w as u64));
     buf.extend_from_slice(input);
     buf.append(&mut vec![0u8;w - (buf.len() % w)]);
     buf
@@ -142,7 +142,7 @@ fn left_encode(value: u64) -> Vec<u8> {
         i += 1;
     }
     // Prepend number of encoded bytes
-    b[i - 1] = 9 - u8::try_from(i).unwrap();
+    b[i - 1] = 9 - (i as u8);
     b[i - 1..].to_vec()
 }
 

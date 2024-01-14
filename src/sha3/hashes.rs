@@ -132,8 +132,8 @@ fn marshall(state: &State) -> Vec<u8> {
         out.extend_from_slice(&state.a[i].to_be_bytes());
     }
     out.push(state.ds_byte);
-    out.extend_from_slice(&u64::try_from(state.seek).unwrap().to_be_bytes());
-    out.extend_from_slice(&u64::try_from(state.len).unwrap().to_be_bytes());
+    out.extend_from_slice(&(state.seek as u64).to_be_bytes());
+    out.extend_from_slice(&(state.len as u64).to_be_bytes());
     out.extend_from_slice(&state.storage);
     match state.state {
         SpongeDirection::SpongeAbsorbing => out.push(0u8),
@@ -193,30 +193,22 @@ fn unmarshall(state: &mut State, _b: &[u8]) -> Option<hmac::Error> {
     // Parse seek.
     slice = &_b[seek..seek + 8];
     seek += 8;
-    let mut buf =
-        match slice.try_into() {
+    let mut buf = match slice.try_into() {
             Ok(val) => val,
             Err(_) => return Some(err)
         };
-    state.seek =
-        match usize::try_from(u64::from_be_bytes(buf)) {
-            Ok(val) => val,
-            Err(_) => return Some(err)
-        };
+    // Because seek is casted to u64 when marshall, so we can use "as".
+    state.seek = u64::from_be_bytes(buf) as usize;
 
     // Parse len.
     slice = &_b[seek..seek + 8];
     seek += 8;
-    buf =
-        match slice.try_into() {
+    buf = match slice.try_into() {
             Ok(val) => val,
             Err(_) => return Some(err)
         };
-    state.len =
-        match usize::try_from(u64::from_be_bytes(buf)) {
-            Ok(val) => val,
-            Err(_) => return Some(err)
-        };
+    // Because len is casted to u64 when marshall, so we can use "as".
+    state.len = u64::from_be_bytes(buf) as usize;
 
     // Parse storage.
     state.storage.copy_from_slice(&_b[seek..seek + ST_LEN]);
