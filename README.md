@@ -1,2 +1,2 @@
 # crypto_rs
-Pure Rust cryptographic
+Pure and safe (not use "unsafe") Rust cryptographic with Golang interfaces
