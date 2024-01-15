@@ -107,15 +107,6 @@ impl State {
         // Make a copy of the original hash so that caller can keep writing
         // and summing.
         self.clone().read(out);
-        // let seek = self.seek;
-        // let len = self.len;
-        // self.seek = 0;
-        //
-        // self.read(out);
-        //
-        // self.seek = seek;
-        // self.len = len;
-        // self.state = SpongeDirection::SpongeAbsorbing;
     }
 
     /// [reset] clears the internal state by zeroing the sponge state and
